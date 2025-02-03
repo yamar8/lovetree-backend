@@ -1,6 +1,11 @@
 import { v2 as cloudinary } from "cloudinary"
 import productModel from "../models/productModel.js"
 
+
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
+
 // function for add product
 const addProduct = async (req, res) => {
     try {
@@ -86,4 +91,62 @@ const singleProduct = async (req, res) => {
     }
 }
 
-export { listProducts, addProduct, removeProduct, singleProduct }
+//new function
+const editProduct = async (req, res) => {
+
+    //    const reqbody = JSON.stringify(req.body);
+    //    const oneProduct = JSON.stringify(req.body[0]);
+    //     console.log("reqbody: " + reqbody);
+    //     console.log("oneProduct :" + oneProduct)
+
+    const updates = req.body; // Array of objects
+    try {
+      for (const item of updates) {
+        const filter = { _id: item._id }; // Filter by _id
+        const update = {
+          $set: {
+            name: item.name,
+            description: item.description,
+            category: item.category,
+            price: item.price
+            // Add other fields if needed
+          },
+        };
+  
+        // Update the document
+        await productModel.updateOne(filter, update);
+      }
+  
+      res.json({ success: true, message: "Products updated successfully" });
+    } catch (error) {
+      console.error('Error updating products:', error);
+      res.status(500).json({ message: 'Failed to update products' });
+    }
+
+    // try {
+    //    const reqbody = JSON.stringify(req.body);
+    //    const oneProduct = JSON.stringify(req.body[0]);
+    //     console.log("reqbody: " + reqbody);
+    //     console.log("oneProduct :" + oneProduct)
+
+        
+    //     if(isEmpty(req.body) === true){
+    //         throw "No Change has been made"
+    //     }else{
+            
+    //         const product = req.body[0]
+    //         const productId = req.body[0]._id
+    //       const updatedProduct = await productModel.updateOne({productId},{$set:{name:"test"}} )
+    //   }
+
+
+    //     res.json({ success: true, message: "Products updated successfully" })
+
+    
+    // } catch (error) {
+    //     console.log(error)
+    //     res.json({ success: false, message: error.message })
+    // }
+}
+
+export {editProduct, listProducts, addProduct, removeProduct, singleProduct }
