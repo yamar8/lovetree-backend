@@ -56,6 +56,8 @@ const listProducts = async (req, res) => {
     try {
         
         const products = await productModel.find({});
+        const productsPrint = JSON.stringify(products);
+       // console.log("productsPrint: ", productsPrint);
         res.json({success:true,products})
 
     } catch (error) {

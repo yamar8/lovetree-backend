@@ -8,6 +8,13 @@ const createToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET)
 }
 
+const googleLogin = async(req, res) => {
+       const reqbody = JSON.stringify(req.body);
+    //    const oneProduct = JSON.stringify(req.body[0]);
+         console.log("reqbody: " + reqbody);
+    //     console.log("oneProduct :" + oneProduct)
+}
+
 // Route for user login
 const loginUser = async (req, res) => {
     try {
@@ -100,4 +107,4 @@ const adminLogin = async (req, res) => {
 }
 
 
-export { loginUser, registerUser, adminLogin }
+export { googleLogin, loginUser, registerUser, adminLogin }
