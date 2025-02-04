@@ -2,19 +2,62 @@ import validator from "validator";
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken'
 import userModel from "../models/userModel.js";
-
+import { OAuth2Client } from 'google-auth-library';
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET)
 }
 
-const googleLogin = async(req, res) => {
-       const reqbody = JSON.stringify(req.body);
-    //    const oneProduct = JSON.stringify(req.body[0]);
-         console.log("reqbody: " + reqbody);
-    //     console.log("oneProduct :" + oneProduct)
-}
 
+
+const googleLogin = async (req, res) => {
+    try {
+        const { token } = req.body;
+
+        // Verify Google token
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID
+        });
+        
+        const payload = ticket.getPayload();
+        const { email, name } = payload;
+
+        // Check if user exists
+        let user = await userModel.findOne({ email });
+
+        if (!user) {
+            // Create new user with dummy password (not used for Google auth)
+            const salt = await bcrypt.genSalt(10);
+            const dummyPassword = Math.random().toString(36).slice(-8); // Generate random string
+            const hashedPassword = await bcrypt.hash(dummyPassword, salt);
+
+            user = new userModel({
+                name,
+                email,
+                password: hashedPassword
+            });
+            
+            await user.save();
+        }
+
+        // Create JWT token
+        const authToken = createToken(user._id);
+        res.json({ 
+            success: true, 
+            token: authToken,
+            message: "Google authentication successful"
+        });
+
+    } catch (error) {
+        console.error('Google login error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Google authentication failed'
+        });
+    }
+};
 // Route for user login
 const loginUser = async (req, res) => {
     try {
