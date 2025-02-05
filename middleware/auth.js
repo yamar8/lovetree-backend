@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 const authUser = async (req, res, next) => {
-
+    console.log(req.body);
     const { token } = req.headers;
 
     if (!token) {
