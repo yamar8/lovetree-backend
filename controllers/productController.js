@@ -66,6 +66,29 @@ const listProducts = async (req, res) => {
     }
 }
 
+const setReviews = async (req, res) => {
+    const { _id,userId, rating, comment } = req.body
+    console.log(userId, rating, comment);
+
+    try{
+        await productModel.updateOne(
+            { _id: _id }, 
+            { $push: { reviews: { userId: userId, comment: comment, rating: rating, date: new Date() } } }
+        );
+        res.json({ success: true, message: "Review Added" })
+
+} catch (error) {
+    console.log(error)
+    res.json({ success: false, message: error.message })
+}
+
+
+
+
+}
+
+
+
 // function for removing product
 const removeProduct = async (req, res) => {
     try {
@@ -151,4 +174,4 @@ const editProduct = async (req, res) => {
     // }
 }
 
-export {editProduct, listProducts, addProduct, removeProduct, singleProduct }
+export {editProduct, listProducts, addProduct, removeProduct, singleProduct, setReviews }
