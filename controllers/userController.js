@@ -15,8 +15,8 @@ const createToken = (id) => {
 const getProfile = async (req, res) => {
     try {
         
-        const reqstring = JSON.stringify(req.body);
-        console.log("req.body: ", reqstring);
+        // const reqstring = JSON.stringify(req.body);
+        // console.log("req.body: ", reqstring);
         const user = await userModel.findById(req.body.userId)
             .select('-password -verificationCode -verificationExpires');
 

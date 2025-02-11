@@ -38,7 +38,7 @@ const addProduct = async (req, res) => {
             date: Date.now()
         }
 
-        console.log(productData);
+        // console.log(productData);
 
         const product = new productModel(productData);
         await product.save()
@@ -174,4 +174,22 @@ const editProduct = async (req, res) => {
     // }
 }
 
-export {editProduct, listProducts, addProduct, removeProduct, singleProduct, setReviews }
+
+const getCategories = async (req, res) => {
+    
+    try {
+        
+        const categories = await productModel.find({}, 'category')
+        res.json({success:true,categories})
+
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
+
+}
+
+
+
+
+export {editProduct, listProducts, addProduct, removeProduct, singleProduct, setReviews, getCategories }
